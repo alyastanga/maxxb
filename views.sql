@@ -132,4 +132,44 @@ SELECT
     p.reference_no AS "Ref No"
 FROM MAXXBRANDS.payments p;
 
+-- ------------------------------------------
+-- 5. NEW: POS & INVENTORY SPECIALIZED VIEWS
+-- ------------------------------------------
+
+-- View: POS Daily Transaction Summary
+-- Shows all transactions for the current day with employee and customer details
+CREATE OR REPLACE VIEW MAXXBRANDS.vw_pos_daily_summary AS
+SELECT 
+    s.sap_ref_no AS "Receipt #",
+    s.sale_date AS "Timestamp",
+    c.name AS "Customer",
+    e.first_name || ' ' || e.last_name AS "Cashier",
+    s.total_amount AS "Total PHP",
+    s.payment_terms AS "Terms",
+    (SELECT LISTAGG(i.item_name, ', ') WITHIN GROUP (ORDER BY i.item_name) 
+     FROM MAXXBRANDS.sales_items si 
+     JOIN MAXXBRANDS.items i ON si.item_id = i.item_id 
+     WHERE si.sale_id = s.sale_id) AS "Items Sold"
+FROM MAXXBRANDS.sales s
+JOIN MAXXBRANDS.customers c ON s.customer_id = c.customer_id
+JOIN MAXXBRANDS.employees e ON s.processed_by = e.employee_id
+WHERE TRUNC(s.sale_date) = TRUNC(CURRENT_DATE);
+
+-- View: Inventory Asset Valuation
+-- Calculates the monetary value of current physical stock based on SRP
+CREATE OR REPLACE VIEW MAXXBRANDS.vw_inventory_valuation AS
+SELECT 
+    loc.name AS "Location",
+    cat.name AS "Category",
+    itm.item_name AS "Product",
+    inv.qty_on_hand AS "Stock",
+    itm.srp AS "Unit Price (SRP)",
+    (inv.qty_on_hand * itm.srp) AS "Total Asset Value"
+FROM MAXXBRANDS.inventory inv
+JOIN MAXXBRANDS.items itm ON inv.item_id = itm.item_id
+JOIN MAXXBRANDS.item_types typ ON itm.type_id = typ.type_id
+JOIN MAXXBRANDS.categories cat ON typ.category_id = cat.category_id
+JOIN MAXXBRANDS.locations loc ON inv.location_id = loc.location_id
+ORDER BY "Total Asset Value" DESC;
+
 COMMIT;
