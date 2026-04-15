@@ -84,8 +84,19 @@ CREATE OR REPLACE PACKAGE BODY MAXXBRANDS.PKG_PROCUREMENT AS
                     ) RETURNING po_id INTO v_po_id;
             END;
 
-            -- C. Calculate Reorder Qty (Standard: 2x Threshold)
-            v_reorder_qty := v_alerts(i).min_threshold * 2;
+            -- C. Calculate Smart Reorder Qty
+            -- Use the 30-day velocity to ensure we order enough to cover demand, with a floor of 2x threshold
+            BEGIN
+                SELECT ROUND("Daily Velocity" * 30, 0) INTO v_reorder_qty
+                FROM MAXXBRANDS.vw_sales_velocity
+                WHERE "SKU" = (SELECT item_code FROM MAXXBRANDS.items WHERE item_id = v_alerts(i).item_id);
+                
+                -- Ensure reorder quantity is at least the standard 2x threshold
+                v_reorder_qty := GREATEST(NVL(v_reorder_qty, 0), v_alerts(i).min_threshold * 2);
+            EXCEPTION
+                WHEN OTHERS THEN
+                    v_reorder_qty := v_alerts(i).min_threshold * 2; -- Fallback to legacy logic
+            END;
 
             -- D. Find or Create Line Item
             MERGE INTO MAXXBRANDS.purchase_order_lines pol
