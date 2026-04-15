@@ -85,7 +85,7 @@ WITH sales_summary AS (
         COUNT(DISTINCT TRUNC(s.sale_date)) as active_days
     FROM MAXXBRANDS.sales_items si
     JOIN MAXXBRANDS.sales s ON si.sale_id = s.sale_id
-    WHERE s.sale_date >= CURRENT_DATE - 30
+    WHERE s.sale_date >= TRUNC(SYSDATE) - 29 -- Last 30 full days including today
     GROUP BY item_id
 )
 SELECT 

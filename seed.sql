@@ -113,16 +113,16 @@ AND item_id IN (SELECT item_id FROM MAXXBRANDS.items WHERE item_code IN ('SD-SHI
 
 -- 9. PROCUREMENT (3 POs + BULK LINES)
 INSERT INTO MAXXBRANDS.purchase_orders (po_number, supplier_id, requested_by, order_date, status, location_id, approved_by, approval_date, payment_terms, due_date) VALUES 
-('PO-2026-001', (SELECT supplier_id FROM MAXXBRANDS.suppliers WHERE supplier_code = 'SUP-SD-01'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'jerick.remo@maxxbrands.com'), DATE'2026-03-01', 'Approved', (SELECT location_id FROM MAXXBRANDS.locations WHERE location_code = 'LOC-WHS-01'), 
- (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'peter.delacruz@maxxbrands.com'), TIMESTAMP'2026-03-01 10:30:00', 'Net 30', DATE'2026-03-31');
+('PO-2026-001', (SELECT supplier_id FROM MAXXBRANDS.suppliers WHERE supplier_code = 'SUP-SD-01'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'jerick.remo@maxxbrands.com'), DATE'2026-04-01', 'Approved', (SELECT location_id FROM MAXXBRANDS.locations WHERE location_code = 'LOC-WHS-01'), 
+ (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'peter.delacruz@maxxbrands.com'), TIMESTAMP'2026-04-01 10:30:00', 'Net 30', DATE'2026-04-30');
 
 INSERT INTO MAXXBRANDS.purchase_orders (po_number, supplier_id, requested_by, order_date, status, location_id, approved_by, approval_date, payment_terms, due_date) VALUES 
-('PO-2026-002', (SELECT supplier_id FROM MAXXBRANDS.suppliers WHERE supplier_code = 'SUP-NL-02'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'jerick.remo@maxxbrands.com'), DATE'2026-03-05', 'Pending', (SELECT location_id FROM MAXXBRANDS.locations WHERE location_code = 'LOC-WHS-01'), 
- (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'peter.delacruz@maxxbrands.com'), TIMESTAMP'2026-03-06 09:15:00', 'Net 30', DATE'2026-04-05');
+('PO-2026-002', (SELECT supplier_id FROM MAXXBRANDS.suppliers WHERE supplier_code = 'SUP-NL-02'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'jerick.remo@maxxbrands.com'), DATE'2026-04-05', 'Pending', (SELECT location_id FROM MAXXBRANDS.locations WHERE location_code = 'LOC-WHS-01'), 
+ (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'peter.delacruz@maxxbrands.com'), TIMESTAMP'2026-04-06 09:15:00', 'Net 30', DATE'2026-05-05');
 
 INSERT INTO MAXXBRANDS.purchase_orders (po_number, supplier_id, requested_by, order_date, status, location_id, approved_by, approval_date, payment_terms, due_date) VALUES 
-('PO-2026-003', (SELECT supplier_id FROM MAXXBRANDS.suppliers WHERE supplier_code = 'SUP-TG-03'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'jerick.remo@maxxbrands.com'), DATE'2026-03-10', 'Delivered', (SELECT location_id FROM MAXXBRANDS.locations WHERE location_code = 'LOC-WHS-01'), 
- (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'peter.delacruz@maxxbrands.com'), TIMESTAMP'2026-03-10 16:45:00', 'Net 30', DATE'2026-04-10');
+('PO-2026-003', (SELECT supplier_id FROM MAXXBRANDS.suppliers WHERE supplier_code = 'SUP-TG-03'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'jerick.remo@maxxbrands.com'), DATE'2026-04-10', 'Delivered', (SELECT location_id FROM MAXXBRANDS.locations WHERE location_code = 'LOC-WHS-01'), 
+ (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'peter.delacruz@maxxbrands.com'), TIMESTAMP'2026-04-10 16:45:00', 'Net 30', DATE'2026-05-10');
 
 -- Bulk PO Lines
 INSERT INTO MAXXBRANDS.purchase_order_lines (po_id, item_id, suggested_qty, unit_cost, line_total) VALUES ((SELECT po_id FROM MAXXBRANDS.purchase_orders WHERE po_number = 'PO-2026-001'), (SELECT item_id FROM MAXXBRANDS.items WHERE item_code = 'SD-SHIBA-TVS'), 50, 15400, 770000);
@@ -142,57 +142,57 @@ INSERT INTO MAXXBRANDS.customers (name, email) VALUES ('Federal Land', 'fed.proc
 INSERT INTO MAXXBRANDS.customers (name, email) VALUES ('Shang Properties', 'shang.logistics@shang.com');
 INSERT INTO MAXXBRANDS.customers (name, email) VALUES ('Vista Land', 'vlad.procurement@vistaland.com.ph');
 
-INSERT INTO MAXXBRANDS.sales (sap_ref_no, customer_id, processed_by, sale_date, total_amount, payment_terms, due_date) VALUES ('SAP-INV-260301', (SELECT customer_id FROM MAXXBRANDS.customers WHERE name = 'Ayala Land Inc.'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'hanz.mapua@maxxbrands.com'), TIMESTAMP'2026-03-02 10:30:00', 581000, 'Full Payment', DATE'2026-03-02');
-INSERT INTO MAXXBRANDS.sales (sap_ref_no, customer_id, processed_by, sale_date, total_amount, payment_terms, due_date) VALUES ('POS-BGC-001', (SELECT customer_id FROM MAXXBRANDS.customers WHERE name = 'Walk-in Retail'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'kurt.raneses@maxxbrands.com'), TIMESTAMP'2026-03-02 14:15:00', 28560, 'Full Payment', DATE'2026-03-02');
-INSERT INTO MAXXBRANDS.sales (sap_ref_no, customer_id, processed_by, sale_date, total_amount, payment_terms, due_date) VALUES ('SAP-INV-260305', (SELECT customer_id FROM MAXXBRANDS.customers WHERE name = 'SM Prime Holdings'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'hanz.mapua@maxxbrands.com'), TIMESTAMP'2026-03-05 11:00:00', 597670, 'Full Payment', DATE'2026-03-05');
-INSERT INTO MAXXBRANDS.sales (sap_ref_no, customer_id, processed_by, sale_date, total_amount, payment_terms, due_date) VALUES ('SAP-INV-260308', (SELECT customer_id FROM MAXXBRANDS.customers WHERE name = 'Megaworld Corp'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'hanz.mapua@maxxbrands.com'), TIMESTAMP'2026-03-08 09:00:00', 120000, 'Full Payment', DATE'2026-03-08');
-INSERT INTO MAXXBRANDS.sales (sap_ref_no, customer_id, processed_by, sale_date, total_amount, payment_terms, due_date) VALUES ('POS-BGC-002', (SELECT customer_id FROM MAXXBRANDS.customers WHERE name = 'John Doe'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'kurt.raneses@maxxbrands.com'), TIMESTAMP'2026-03-09 16:30:00', 15000, 'Full Payment', DATE'2026-03-09');
-INSERT INTO MAXXBRANDS.sales (sap_ref_no, customer_id, processed_by, sale_date, total_amount, payment_terms, due_date) VALUES ('SAP-INV-260310', (SELECT customer_id FROM MAXXBRANDS.customers WHERE name = 'Rockwell Land'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'hanz.mapua@maxxbrands.com'), TIMESTAMP'2026-03-10 10:00:00', 450000, 'Full Payment', DATE'2026-03-10');
-INSERT INTO MAXXBRANDS.sales (sap_ref_no, customer_id, processed_by, sale_date, total_amount, payment_terms, due_date) VALUES ('SAP-INV-260312', (SELECT customer_id FROM MAXXBRANDS.customers WHERE name = 'Federal Land'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'hanz.mapua@maxxbrands.com'), TIMESTAMP'2026-03-12 14:00:00', 310000, 'Full Payment', DATE'2026-03-12');
-INSERT INTO MAXXBRANDS.sales (sap_ref_no, customer_id, processed_by, sale_date, total_amount, payment_terms, due_date) VALUES ('POS-BGC-003', (SELECT customer_id FROM MAXXBRANDS.customers WHERE name = 'Jane Smith'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'kurt.raneses@maxxbrands.com'), TIMESTAMP'2026-03-14 11:30:00', 9000, 'Full Payment', DATE'2026-03-14');
-INSERT INTO MAXXBRANDS.sales (sap_ref_no, customer_id, processed_by, sale_date, total_amount, payment_terms, due_date) VALUES ('SAP-INV-260315', (SELECT customer_id FROM MAXXBRANDS.customers WHERE name = 'Shang Properties'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'hanz.mapua@maxxbrands.com'), TIMESTAMP'2026-03-15 09:15:00', 220000, 'Full Payment', DATE'2026-03-15');
-INSERT INTO MAXXBRANDS.sales (sap_ref_no, customer_id, processed_by, sale_date, total_amount, payment_terms, due_date) VALUES ('SAP-INV-260318', (SELECT customer_id FROM MAXXBRANDS.customers WHERE name = 'Vista Land'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'hanz.mapua@maxxbrands.com'), TIMESTAMP'2026-03-18 13:45:00', 880000, 'Full Payment', DATE'2026-03-18');
+INSERT INTO MAXXBRANDS.sales (sap_ref_no, customer_id, processed_by, sale_date, total_amount, payment_terms, due_date) VALUES ('SAP-INV-260301', (SELECT customer_id FROM MAXXBRANDS.customers WHERE name = 'Ayala Land Inc.'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'hanz.mapua@maxxbrands.com'), TIMESTAMP'2026-04-02 10:30:00', 581000, 'Full Payment', DATE'2026-04-02');
+INSERT INTO MAXXBRANDS.sales (sap_ref_no, customer_id, processed_by, sale_date, total_amount, payment_terms, due_date) VALUES ('POS-BGC-001', (SELECT customer_id FROM MAXXBRANDS.customers WHERE name = 'Walk-in Retail'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'kurt.raneses@maxxbrands.com'), TIMESTAMP'2026-04-02 14:15:00', 28560, 'Full Payment', DATE'2026-04-02');
+INSERT INTO MAXXBRANDS.sales (sap_ref_no, customer_id, processed_by, sale_date, total_amount, payment_terms, due_date) VALUES ('SAP-INV-260305', (SELECT customer_id FROM MAXXBRANDS.customers WHERE name = 'SM Prime Holdings'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'hanz.mapua@maxxbrands.com'), TIMESTAMP'2026-04-05 11:00:00', 597670, 'Full Payment', DATE'2026-04-05');
+INSERT INTO MAXXBRANDS.sales (sap_ref_no, customer_id, processed_by, sale_date, total_amount, payment_terms, due_date) VALUES ('SAP-INV-260308', (SELECT customer_id FROM MAXXBRANDS.customers WHERE name = 'Megaworld Corp'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'hanz.mapua@maxxbrands.com'), TIMESTAMP'2026-04-08 09:00:00', 120000, 'Full Payment', DATE'2026-04-08');
+INSERT INTO MAXXBRANDS.sales (sap_ref_no, customer_id, processed_by, sale_date, total_amount, payment_terms, due_date) VALUES ('POS-BGC-002', (SELECT customer_id FROM MAXXBRANDS.customers WHERE name = 'John Doe'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'kurt.raneses@maxxbrands.com'), TIMESTAMP'2026-04-09 16:30:00', 15000, 'Full Payment', DATE'2026-04-09');
+INSERT INTO MAXXBRANDS.sales (sap_ref_no, customer_id, processed_by, sale_date, total_amount, payment_terms, due_date) VALUES ('SAP-INV-260310', (SELECT customer_id FROM MAXXBRANDS.customers WHERE name = 'Rockwell Land'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'hanz.mapua@maxxbrands.com'), TIMESTAMP'2026-04-10 10:00:00', 450000, 'Full Payment', DATE'2026-04-10');
+INSERT INTO MAXXBRANDS.sales (sap_ref_no, customer_id, processed_by, sale_date, total_amount, payment_terms, due_date) VALUES ('SAP-INV-260312', (SELECT customer_id FROM MAXXBRANDS.customers WHERE name = 'Federal Land'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'hanz.mapua@maxxbrands.com'), TIMESTAMP'2026-04-12 14:00:00', 310000, 'Full Payment', DATE'2026-04-12');
+INSERT INTO MAXXBRANDS.sales (sap_ref_no, customer_id, processed_by, sale_date, total_amount, payment_terms, due_date) VALUES ('POS-BGC-003', (SELECT customer_id FROM MAXXBRANDS.customers WHERE name = 'Jane Smith'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'kurt.raneses@maxxbrands.com'), TIMESTAMP'2026-04-14 11:30:00', 9000, 'Full Payment', DATE'2026-04-14');
+INSERT INTO MAXXBRANDS.sales (sap_ref_no, customer_id, processed_by, sale_date, total_amount, payment_terms, due_date) VALUES ('SAP-INV-260315', (SELECT customer_id FROM MAXXBRANDS.customers WHERE name = 'Shang Properties'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'hanz.mapua@maxxbrands.com'), TIMESTAMP'2026-04-15 09:15:00', 220000, 'Full Payment', DATE'2026-04-15');
+INSERT INTO MAXXBRANDS.sales (sap_ref_no, customer_id, processed_by, sale_date, total_amount, payment_terms, due_date) VALUES ('SAP-INV-260318', (SELECT customer_id FROM MAXXBRANDS.customers WHERE name = 'Vista Land'), (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'hanz.mapua@maxxbrands.com'), TIMESTAMP'2026-04-16 01:45:00', 880000, 'Full Payment', DATE'2026-04-16');
 
 -- Bulk Sales Items
 INSERT INTO MAXXBRANDS.sales_items (sale_id, item_id, qty, unit_price, line_total, allocation_status) VALUES ((SELECT sale_id FROM MAXXBRANDS.sales WHERE sap_ref_no = 'SAP-INV-260301'), (SELECT item_id FROM MAXXBRANDS.items WHERE item_code = 'SD-SHIBA-TVS'), 5, 30800, 154000, 'RELEASED');
 INSERT INTO MAXXBRANDS.sales_items (sale_id, item_id, qty, unit_price, line_total, allocation_status) VALUES ((SELECT sale_id FROM MAXXBRANDS.sales WHERE sap_ref_no = 'SAP-INV-260301'), (SELECT item_id FROM MAXXBRANDS.items WHERE item_code = 'SD-ALFA-CT'), 5, 17080, 85400, 'RELEASED');
 INSERT INTO MAXXBRANDS.sales_items (sale_id, item_id, qty, unit_price, line_total, allocation_status) SELECT (SELECT sale_id FROM MAXXBRANDS.sales WHERE sap_ref_no = 'SAP-INV-260318'), item_id, 1, srp, srp, 'RELEASED' FROM MAXXBRANDS.items WHERE item_code IN ('SD-NORD-SOF', 'SD-IRIS-SOF', 'SD-FLEX-SOF');
 
--- 11. ATTENDANCE (March)
-INSERT INTO MAXXBRANDS.attendance (employee_id, work_date, time_in, time_out, status) VALUES ((SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'peter.delacruz@maxxbrands.com'), DATE'2026-03-02', TIMESTAMP'2026-03-02 08:00:00', TIMESTAMP'2026-03-02 17:00:00', 'On-Time');
-INSERT INTO MAXXBRANDS.attendance (employee_id, work_date, time_in, time_out, status) VALUES ((SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'hanz.mapua@maxxbrands.com'), DATE'2026-03-02', TIMESTAMP'2026-03-02 08:15:00', TIMESTAMP'2026-03-02 17:15:00', 'Late');
-INSERT INTO MAXXBRANDS.attendance (employee_id, work_date, time_in, time_out, status) VALUES ((SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'kurt.raneses@maxxbrands.com'), DATE'2026-03-02', TIMESTAMP'2026-03-02 07:55:00', TIMESTAMP'2026-03-02 16:55:00', 'On-Time');
-INSERT INTO MAXXBRANDS.attendance (employee_id, work_date, time_in, time_out, status) VALUES ((SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'jerick.remo@maxxbrands.com'), DATE'2026-03-02', TIMESTAMP'2026-03-02 08:00:00', TIMESTAMP'2026-03-02 17:00:00', 'On-Time');
-INSERT INTO MAXXBRANDS.attendance (employee_id, work_date, time_in, time_out, status) VALUES ((SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'sean.coquia@maxxbrands.com'), DATE'2026-03-02', TIMESTAMP'2026-03-02 08:00:00', TIMESTAMP'2026-03-02 17:00:00', 'On-Time');
+-- 11. ATTENDANCE (April)
+INSERT INTO MAXXBRANDS.attendance (employee_id, work_date, time_in, time_out, status) VALUES ((SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'peter.delacruz@maxxbrands.com'), DATE'2026-04-02', TIMESTAMP'2026-04-02 08:00:00', TIMESTAMP'2026-04-02 17:00:00', 'On-Time');
+INSERT INTO MAXXBRANDS.attendance (employee_id, work_date, time_in, time_out, status) VALUES ((SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'hanz.mapua@maxxbrands.com'), DATE'2026-04-02', TIMESTAMP'2026-04-02 08:15:00', TIMESTAMP'2026-04-02 17:15:00', 'Late');
+INSERT INTO MAXXBRANDS.attendance (employee_id, work_date, time_in, time_out, status) VALUES ((SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'kurt.raneses@maxxbrands.com'), DATE'2026-04-02', TIMESTAMP'2026-04-02 07:55:00', TIMESTAMP'2026-04-02 16:55:00', 'On-Time');
+INSERT INTO MAXXBRANDS.attendance (employee_id, work_date, time_in, time_out, status) VALUES ((SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'jerick.remo@maxxbrands.com'), DATE'2026-04-02', TIMESTAMP'2026-04-02 08:00:00', TIMESTAMP'2026-04-02 17:00:00', 'On-Time');
+INSERT INTO MAXXBRANDS.attendance (employee_id, work_date, time_in, time_out, status) VALUES ((SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'sean.coquia@maxxbrands.com'), DATE'2026-04-02', TIMESTAMP'2026-04-02 08:00:00', TIMESTAMP'2026-04-02 17:00:00', 'On-Time');
 
 -- 12. PROCUREMENT TRACKING & RECEIPTS
 INSERT INTO MAXXBRANDS.purchases (po_id, received_by, received_date, status) VALUES 
 ((SELECT po_id FROM MAXXBRANDS.purchase_orders WHERE po_number = 'PO-2026-003'), 
  (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'jerick.remo@maxxbrands.com'), 
- TIMESTAMP'2026-03-12 10:00:00', 'Full Delivery');
+ TIMESTAMP'2026-04-12 10:00:00', 'Full Delivery');
 
 INSERT INTO MAXXBRANDS.po_tracking (po_id, milestone, location, update_time, logged_by) VALUES 
-((SELECT po_id FROM MAXXBRANDS.purchase_orders WHERE po_number = 'PO-2026-001'), 'Order Confirmed', 'Songdream HQ', TIMESTAMP'2026-03-01 11:00:00', (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'peter.delacruz@maxxbrands.com'));
+((SELECT po_id FROM MAXXBRANDS.purchase_orders WHERE po_number = 'PO-2026-001'), 'Order Confirmed', 'Songdream HQ', TIMESTAMP'2026-04-01 11:00:00', (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'peter.delacruz@maxxbrands.com'));
 INSERT INTO MAXXBRANDS.po_tracking (po_id, milestone, location, update_time, logged_by) VALUES 
-((SELECT po_id FROM MAXXBRANDS.purchase_orders WHERE po_number = 'PO-2026-003'), 'In Transit', 'Manila Port', TIMESTAMP'2026-03-11 14:00:00', (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'sean.coquia@maxxbrands.com'));
+((SELECT po_id FROM MAXXBRANDS.purchase_orders WHERE po_number = 'PO-2026-003'), 'In Transit', 'Manila Port', TIMESTAMP'2026-04-11 14:00:00', (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'sean.coquia@maxxbrands.com'));
 
 -- 13. FULFILLMENTS
 INSERT INTO MAXXBRANDS.fulfillments (sale_id, method, status, target_date, actual_completion_date, handled_by) VALUES 
-((SELECT sale_id FROM MAXXBRANDS.sales WHERE sap_ref_no = 'SAP-INV-260301'), 'Truck Delivery', 'COMPLETED', DATE'2026-03-05', TIMESTAMP'2026-03-05 15:00:00', (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'sean.coquia@maxxbrands.com'));
+((SELECT sale_id FROM MAXXBRANDS.sales WHERE sap_ref_no = 'SAP-INV-260301'), 'Truck Delivery', 'COMPLETED', DATE'2026-04-05', TIMESTAMP'2026-04-05 15:00:00', (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'sean.coquia@maxxbrands.com'));
 INSERT INTO MAXXBRANDS.fulfillments (sale_id, method, status, target_date, actual_completion_date, handled_by) VALUES 
-((SELECT sale_id FROM MAXXBRANDS.sales WHERE sap_ref_no = 'POS-BGC-001'), 'Pick-up', 'COMPLETED', DATE'2026-03-02', TIMESTAMP'2026-03-02 16:30:00', (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'kurt.raneses@maxxbrands.com'));
+((SELECT sale_id FROM MAXXBRANDS.sales WHERE sap_ref_no = 'POS-BGC-001'), 'Pick-up', 'COMPLETED', DATE'2026-04-02', TIMESTAMP'2026-04-02 16:30:00', (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'kurt.raneses@maxxbrands.com'));
 
 -- 14. EXTENSION MODULES (Supplier Prices, Payments, Alerts, Audits)
 INSERT INTO MAXXBRANDS.supplier_item_prices (supplier_id, item_id, unit_cost, lead_time_days, effective_date) VALUES
 ((SELECT supplier_id FROM MAXXBRANDS.suppliers WHERE supplier_code = 'SUP-SD-01'), (SELECT item_id FROM MAXXBRANDS.items WHERE item_code = 'SD-SHIBA-TVS'), 15000, 30, DATE'2026-01-01');
 
 INSERT INTO MAXXBRANDS.payments (related_type, related_id, amount, payment_method, reference_no, logged_by, payment_date) VALUES
-('SALE', (SELECT sale_id FROM MAXXBRANDS.sales WHERE sap_ref_no = 'SAP-INV-260301'), 581000, 'Bank Transfer', 'REF-PYMT-001', (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'hanz.mapua@maxxbrands.com'), TIMESTAMP'2026-03-02 11:30:00');
+('SALE', (SELECT sale_id FROM MAXXBRANDS.sales WHERE sap_ref_no = 'SAP-INV-260301'), 581000, 'Bank Transfer', 'REF-PYMT-001', (SELECT employee_id FROM MAXXBRANDS.employees WHERE email = 'hanz.mapua@maxxbrands.com'), TIMESTAMP'2026-04-02 11:30:00');
 
 INSERT INTO MAXXBRANDS.reorder_alerts (item_id, location_id, current_qty, threshold_qty, status, alert_date) VALUES
-((SELECT item_id FROM MAXXBRANDS.items WHERE item_code = 'SD-SHIBA-TVS'), (SELECT location_id FROM MAXXBRANDS.locations WHERE location_code = 'LOC-WHS-01'), 3, 3, 'ACTIVE', TIMESTAMP'2026-03-01 08:30:00');
+((SELECT item_id FROM MAXXBRANDS.items WHERE item_code = 'SD-SHIBA-TVS'), (SELECT location_id FROM MAXXBRANDS.locations WHERE location_code = 'LOC-WHS-01'), 3, 3, 'ACTIVE', TIMESTAMP'2026-04-01 08:30:00');
 
 INSERT INTO MAXXBRANDS.audit_logs (user_id, action_type, log_timestamp, log_details) VALUES
-((SELECT user_id FROM MAXXBRANDS.users WHERE username = 'admin_peter'), 'INVENTORY_ADJUSTMENT', TIMESTAMP'2026-03-02 11:00:00', 'Stock replenishment confirmed for SD-SHIBA-TVS via PO-2026-001');
+((SELECT user_id FROM MAXXBRANDS.users WHERE username = 'admin_peter'), 'INVENTORY_ADJUSTMENT', TIMESTAMP'2026-04-02 11:00:00', 'Stock replenishment confirmed for SD-SHIBA-TVS via PO-2026-001');
 
 COMMIT;
