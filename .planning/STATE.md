@@ -5,12 +5,12 @@
 See: `.planning/PROJECT.md` (re-initialized 2026-04-16)
 
 **Core value**: Centralized, accurate data that eliminates manual tracking errors.
-**Current focus**: Phase 1: Advanced Reporting Layer.
+**Current focus**: Phase 3: Global System Resilience.
 
 ## Active Workstream
 
-- **Workstream 1**: Reporting & Analytics Implementation
-    - **Current Step**: Ready to plan Phase 1 (`views.sql`).
+- **Workstream 1**: System Resilience Implementation
+    - **Current Step**: Ready to plan Phase 3 (Normalization of location strings).
     - **Owner**: Antigravity.
 
 ## Technical Decisions
