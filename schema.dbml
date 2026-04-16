@@ -1,0 +1,242 @@
+// MAXXBRANDS ERP DATABASE SCHEMA
+// Target: dbdiagram.io
+
+Table roles {
+  role_id number [pk, note: 'MAXXBRANDS.seq_role_id.NEXTVAL']
+  name varchar2 [not null, unique]
+}
+
+Table employees {
+  employee_id number [pk, note: 'MAXXBRANDS.seq_employee_id.NEXTVAL']
+  role_id number [not null]
+  first_name varchar2 [not null]
+  last_name varchar2 [not null]
+  hire_date timestamp [not null, default: 'CURRENT_TIMESTAMP']
+  email varchar2 [unique]
+}
+
+Table users {
+  user_id number [pk, note: 'MAXXBRANDS.seq_user_id.NEXTVAL']
+  employee_id number [not null, unique]
+  username varchar2 [not null, unique]
+  password_hash varchar2 [not null]
+}
+
+Table attendance {
+  attendance_id number [pk, note: 'MAXXBRANDS.seq_attendance_id.NEXTVAL']
+  employee_id number [not null]
+  work_date date [not null]
+  time_in timestamp [not null]
+  time_out timestamp
+  status varchar2 [note: 'On-Time, Late, Absent, Leave']
+}
+
+Table categories {
+  category_id number [pk, note: 'MAXXBRANDS.seq_category_id.NEXTVAL']
+  name varchar2 [not null, unique]
+}
+
+Table item_types {
+  type_id number [pk, note: 'MAXXBRANDS.seq_type_id.NEXTVAL']
+  category_id number [not null]
+  name varchar2 [not null, unique]
+}
+
+Table items {
+  item_id number [pk, note: 'MAXXBRANDS.seq_item_id.NEXTVAL']
+  item_code varchar2 [not null, unique]
+  type_id number [not null]
+  item_name varchar2 [not null, unique]
+  dimension varchar2
+  srp number [not null]
+}
+
+Table item_attributes {
+  attribute_id number [pk, note: 'MAXXBRANDS.seq_attribute_id.NEXTVAL']
+  item_id number [not null]
+  material varchar2
+  fabric_color varchar2
+  leg_color varchar2
+}
+
+Table suppliers {
+  supplier_id number [pk, note: 'MAXXBRANDS.seq_supplier_id.NEXTVAL']
+  name varchar2 [not null]
+  contact_no varchar2
+  email varchar2
+  address varchar2
+  supplier_code varchar2 [unique]
+}
+
+Table locations {
+  location_id number [pk, note: 'MAXXBRANDS.seq_location_id.NEXTVAL']
+  name varchar2 [not null]
+  type varchar2 [not null]
+  street varchar2
+  barangay varchar2
+  city varchar2
+  location_code varchar2 [unique]
+  is_default char(1) [default: 'N', note: 'Added in Migration V2']
+}
+
+Table inventory {
+  inventory_id number [pk, note: 'MAXXBRANDS.seq_inventory_id.NEXTVAL']
+  item_id number [not null]
+  location_id number [not null]
+  qty_on_hand number [not null, default: 0]
+  min_threshold number [not null, default: 0]
+}
+
+Table purchase_orders {
+  po_id number [pk, note: 'MAXXBRANDS.seq_po_id.NEXTVAL']
+  po_number varchar2 [unique]
+  supplier_id number [not null]
+  requested_by number [not null]
+  order_date date [not null]
+  status varchar2 [default: 'Pending']
+  total_po_amount number [default: 0]
+  currency varchar2 [default: 'PHP']
+  location_id number [not null]
+  approved_by number
+  approval_date timestamp
+  payment_terms varchar2
+  due_date date
+}
+
+Table purchase_order_lines {
+  po_line_id number [pk, note: 'MAXXBRANDS.seq_po_line_id.NEXTVAL']
+  po_id number [not null]
+  item_id number [not null]
+  suggested_qty number [not null]
+  unit_cost number [not null]
+  line_total number [not null]
+  qty_received number [default: 0]
+}
+
+Table purchases {
+  purchase_id number [pk, note: 'MAXXBRANDS.seq_purchase_id.NEXTVAL']
+  po_id number [not null]
+  received_by number [not null]
+  received_date timestamp [not null]
+  status varchar2 [note: 'Partial Delivery, Full Delivery']
+}
+
+Table po_tracking {
+  tracking_id number [pk, note: 'MAXXBRANDS.seq_tracking_id.NEXTVAL']
+  po_id number [not null]
+  milestone varchar2 [not null]
+  location varchar2
+  update_time timestamp [not null]
+  logged_by number [not null]
+}
+
+Table customers {
+  customer_id number [pk, note: 'MAXXBRANDS.seq_customer_id.NEXTVAL']
+  name varchar2 [not null]
+  contact_no varchar2
+  email varchar2
+  project_location varchar2
+}
+
+Table sales {
+  sale_id number [pk, note: 'MAXXBRANDS.seq_sale_id.NEXTVAL']
+  sap_ref_no varchar2 [unique]
+  customer_id number [not null]
+  processed_by number [not null]
+  sale_date timestamp [not null]
+  total_amount number [default: 0]
+  tax_amount number [default: 0, note: 'Added in Migration V1']
+  shipping_amount number [default: 0, note: 'Added in Migration V1']
+  payment_terms varchar2
+  due_date date
+}
+
+Table sales_items {
+  sale_item_id number [pk, note: 'MAXXBRANDS.seq_sale_item_id.NEXTVAL']
+  sale_id number [not null]
+  item_id number [not null]
+  qty number [not null]
+  unit_price number [not null]
+  line_total number [not null]
+  allocation_status varchar2 [note: 'ALLOCATED, RELEASED, BACKORDERED']
+}
+
+Table fulfillments {
+  fulfillment_id number [pk, note: 'MAXXBRANDS.seq_fulfillment_id.NEXTVAL']
+  sale_id number [not null]
+  method varchar2 [note: 'Pick-up, Truck Delivery, Van Delivery']
+  status varchar2 [default: 'PENDING']
+  target_date date [not null]
+  actual_completion_date timestamp
+  handled_by number [not null]
+}
+
+Table supplier_item_prices {
+  price_id number [pk, note: 'GENERATED BY DEFAULT AS IDENTITY']
+  supplier_id number [not null]
+  item_id number [not null]
+  unit_cost number [not null]
+  lead_time_days number [default: 0]
+  effective_date date [default: 'CURRENT_DATE']
+}
+
+Table payments {
+  payment_id number [pk, note: 'MAXXBRANDS.seq_payment_id.NEXTVAL']
+  related_type varchar2 [not null, note: 'SALE, PO']
+  related_id number [not null]
+  amount number [not null]
+  payment_date timestamp [not null, default: 'CURRENT_TIMESTAMP']
+  payment_method varchar2 [note: 'Cash, Bank Transfer, Credit Card, Check, G-Cash']
+  reference_no varchar2
+  logged_by number [not null]
+}
+
+Table reorder_alerts {
+  alert_id number [pk, note: 'MAXXBRANDS.seq_alert_id.NEXTVAL']
+  item_id number [not null]
+  location_id number [not null]
+  current_qty number [not null]
+  threshold_qty number [not null]
+  alert_date timestamp [default: 'CURRENT_TIMESTAMP']
+  status varchar2 [default: 'ACTIVE', note: 'ACTIVE, REVIEWED, DISMISSED, PO_CREATED']
+}
+
+Table audit_logs {
+  log_id number [pk, note: 'MAXXBRANDS.seq_log_id.NEXTVAL']
+  user_id number [not null]
+  action_type varchar2 [not null]
+  log_timestamp timestamp [not null, default: 'CURRENT_TIMESTAMP']
+  log_details varchar2
+}
+
+// Relationships
+Ref: employees.role_id > roles.role_id
+Ref: users.employee_id - employees.employee_id
+Ref: attendance.employee_id > employees.employee_id
+Ref: item_types.category_id > categories.category_id
+Ref: items.type_id > item_types.type_id
+Ref: item_attributes.item_id > items.item_id
+Ref: inventory.item_id > items.item_id
+Ref: inventory.location_id > locations.location_id
+Ref: purchase_orders.supplier_id > suppliers.supplier_id
+Ref: purchase_orders.requested_by > employees.employee_id
+Ref: purchase_orders.location_id > locations.location_id
+Ref: purchase_orders.approved_by > employees.employee_id
+Ref: purchase_order_lines.po_id > purchase_orders.po_id
+Ref: purchase_order_lines.item_id > items.item_id
+Ref: purchases.po_id > purchase_orders.po_id
+Ref: purchases.received_by > employees.employee_id
+Ref: po_tracking.po_id > purchase_orders.po_id
+Ref: po_tracking.logged_by > employees.employee_id
+Ref: sales.customer_id > customers.customer_id
+Ref: sales.processed_by > employees.employee_id
+Ref: sales_items.sale_id > sales.sale_id
+Ref: sales_items.item_id > items.item_id
+Ref: fulfillments.sale_id > sales.sale_id
+Ref: fulfillments.handled_by > employees.employee_id
+Ref: supplier_item_prices.supplier_id > suppliers.supplier_id
+Ref: supplier_item_prices.item_id > items.item_id
+Ref: payments.logged_by > employees.employee_id
+Ref: reorder_alerts.item_id > items.item_id
+Ref: reorder_alerts.location_id > locations.location_id
+Ref: audit_logs.user_id > users.user_id

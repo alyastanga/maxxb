@@ -20,7 +20,7 @@ CREATE OR REPLACE PACKAGE BODY MAXXBRANDS.PKG_CORE AS
     BEGIN
         SELECT location_id INTO v_id 
         FROM MAXXBRANDS.locations 
-        WHERE is_default = 'Y' 
+        WHERE location_code = 'LOC-WHS-01' 
         AND ROWNUM = 1;
         
         RETURN v_id;
@@ -32,16 +32,19 @@ CREATE OR REPLACE PACKAGE BODY MAXXBRANDS.PKG_CORE AS
     FUNCTION GET_SYSTEM_USER_ID RETURN NUMBER RESULT_CACHE IS
         v_id NUMBER;
     BEGIN
-        -- Find the primary administrator or system account
-        SELECT employee_id INTO v_id 
-        FROM MAXXBRANDS.employees 
-        WHERE last_name = 'Delacruz' -- Peter Delacruz (Admin)
+        -- Find the primary administrator or system account user_id
+        SELECT u.user_id INTO v_id 
+        FROM MAXXBRANDS.users u
+        JOIN MAXXBRANDS.employees e ON u.employee_id = e.employee_id
+        WHERE e.last_name = 'Dela Cruz' -- Peter Dela Cruz (Admin)
         AND ROWNUM = 1;
         
         RETURN v_id;
     EXCEPTION
         WHEN NO_DATA_FOUND THEN
-            RETURN 1; -- Fallback to first ID
+            -- Fallback: return the first user_id available
+            SELECT MIN(user_id) INTO v_id FROM MAXXBRANDS.users;
+            RETURN COALESCE(v_id, 1);
     END GET_SYSTEM_USER_ID;
 
 END PKG_CORE;

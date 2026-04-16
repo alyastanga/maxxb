@@ -19,22 +19,28 @@ SELECT
     (SELECT COUNT(*) FROM MAXXBRANDS.fulfillments WHERE status IN ('PENDING', 'SCHEDULED') AND target_date = TRUNC(CURRENT_DATE)) AS "Fulfillments Due Today"
 FROM DUAL;
 
--- View: Master Inventory Monitor
+-- View: Master Inventory Monitor (Consolidated)
+-- Detailed breakdown of stock levels, dimensions, and status across all locations
 CREATE OR REPLACE VIEW MAXXBRANDS.vw_inventory_master AS
-SELECT
+SELECT 
+    itm.item_id AS "Item ID",
     itm.item_code AS "SKU",
     itm.item_name AS "Product Name",
+    typ.name AS "Type",
+    itm.dimension AS "Dimension",
     loc.name AS "Location",
-    inv.qty_on_hand AS "Physical Stock",
+    inv.qty_on_hand AS "Stock",
     inv.min_threshold AS "Min Threshold",
     CASE 
         WHEN inv.qty_on_hand <= 0 THEN 'EMERGENCY'
         WHEN inv.qty_on_hand <= inv.min_threshold THEN 'CRITICAL'
-        WHEN inv.qty_on_hand <= (inv.min_threshold * 1.25) THEN 'LOW'
+        WHEN inv.qty_on_hand <= (inv.min_threshold * 1.5) THEN 'LOW'
         ELSE 'OPTIMAL'
-    END AS "Status"
+    END AS "Status",
+    itm.srp AS "Price (SRP)"
 FROM MAXXBRANDS.inventory inv
 JOIN MAXXBRANDS.items itm ON inv.item_id = itm.item_id
+JOIN MAXXBRANDS.item_types typ ON itm.type_id = typ.type_id
 JOIN MAXXBRANDS.locations loc ON inv.location_id = loc.location_id;
 
 -- ------------------------------------------
@@ -81,11 +87,10 @@ CREATE OR REPLACE VIEW MAXXBRANDS.vw_sales_velocity AS
 WITH sales_summary AS (
     SELECT 
         item_id, 
-        SUM(qty) AS total_qty,
-        COUNT(DISTINCT TRUNC(s.sale_date)) as active_days
-    FROM MAXXBRANDS.sales_items si
-    JOIN MAXXBRANDS.sales s ON si.sale_id = s.sale_id
-    WHERE s.sale_date >= TRUNC(SYSDATE) - 29 -- Last 30 full days including today
+        SUM(qty) AS total_qty
+    FROM sales_items si
+    JOIN sales s ON si.sale_id = s.sale_id
+    WHERE s.sale_date >= TRUNC(SYSDATE) - 29
     GROUP BY item_id
 )
 SELECT 
@@ -93,15 +98,18 @@ SELECT
     i.item_name AS "Product",
     COALESCE(ss.total_qty, 0) AS "Units Sold (30d)",
     ROUND(COALESCE(ss.total_qty, 0) / 30.0, 2) AS "Daily Velocity",
-    inv.qty_on_hand AS "Current Stock",
+    -- New Descriptive Label
     CASE 
-        WHEN COALESCE(ss.total_qty, 0) > 0 THEN ROUND(inv.qty_on_hand / (ss.total_qty / 30.0), 1)
-        ELSE 999 -- Infinite days stock remaining
-    END AS "Days Remaining"
-FROM MAXXBRANDS.items i
+        WHEN (COALESCE(ss.total_qty, 0) / 30.0) >= 5.0  THEN 'FAST MOVER'
+        WHEN (COALESCE(ss.total_qty, 0) / 30.0) >= 1.0  THEN 'STEADY'
+        WHEN (COALESCE(ss.total_qty, 0) / 30.0) > 0     THEN 'SLOW'
+        ELSE 'INACTIVE'
+    END AS "Demand Status",
+    inv.qty_on_hand AS "Current Stock"
+FROM items i
 LEFT JOIN sales_summary ss ON i.item_id = ss.item_id
-JOIN MAXXBRANDS.inventory inv ON i.item_id = inv.item_id
-WHERE inv.location_id = MAXXBRANDS.PKG_CORE.GET_DEFAULT_LOCATION_ID();
+JOIN inventory inv ON i.item_id = inv.item_id
+ORDER BY "Daily Velocity" DESC;
 
 -- View: Supplier Reliability Index
 CREATE OR REPLACE VIEW MAXXBRANDS.vw_supplier_reliability AS
