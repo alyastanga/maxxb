@@ -20,12 +20,13 @@ SELECT
 FROM DUAL;
 
 -- View: Master Inventory Monitor (Consolidated)
--- Detailed breakdown of stock levels, dimensions, and status across all locations
+-- Detailed breakdown of stock levels, category, status, and valuation across all locations
 CREATE OR REPLACE VIEW MAXXBRANDS.vw_inventory_master AS
 SELECT 
     itm.item_id AS "Item ID",
     itm.item_code AS "SKU",
     itm.item_name AS "Product Name",
+    cat.name AS "Category",
     typ.name AS "Type",
     itm.dimension AS "Dimension",
     loc.name AS "Location",
@@ -37,11 +38,14 @@ SELECT
         WHEN inv.qty_on_hand <= (inv.min_threshold * 1.5) THEN 'LOW'
         ELSE 'OPTIMAL'
     END AS "Status",
-    itm.srp AS "Price (SRP)"
+    itm.srp AS "Price (SRP)",
+    (inv.qty_on_hand * itm.srp) AS "Asset Value"
 FROM MAXXBRANDS.inventory inv
 JOIN MAXXBRANDS.items itm ON inv.item_id = itm.item_id
 JOIN MAXXBRANDS.item_types typ ON itm.type_id = typ.type_id
-JOIN MAXXBRANDS.locations loc ON inv.location_id = loc.location_id;
+JOIN MAXXBRANDS.categories cat ON typ.category_id = cat.category_id
+JOIN MAXXBRANDS.locations loc ON inv.location_id = loc.location_id
+ORDER BY "Location" ASC, "Asset Value" DESC;
 
 -- ------------------------------------------
 -- 2. OPERATIONS & LOGISTICS
@@ -112,17 +116,20 @@ JOIN inventory inv ON i.item_id = inv.item_id
 ORDER BY "Daily Velocity" DESC;
 
 -- View: Supplier Reliability Index
+-- Compares actual delivery times against supplier-defined lead times
 CREATE OR REPLACE VIEW MAXXBRANDS.vw_supplier_reliability AS
 SELECT 
     s.name AS "Supplier",
-    COUNT(po.po_id) AS "Total Orders",
-    ROUND(AVG(p.received_date - po.order_date), 1) AS "Actual Lead Time (Avg)",
+    COUNT(DISTINCT po.po_id) AS "Total Orders",
+    -- TRUNC() ensures we are subtracting DATE from DATE, returning a NUMBER for AVG()
+    ROUND(AVG(TRUNC(p.received_date) - TRUNC(po.order_date)), 1) AS "Actual Lead Time (Avg)",
     ROUND(AVG(sip.lead_time_days), 1) AS "Target Lead Time (Avg)",
-    ROUND(AVG(p.received_date - po.order_date) - AVG(sip.lead_time_days), 1) AS "Variance (Days)"
+    ROUND(AVG(TRUNC(p.received_date) - TRUNC(po.order_date)) - AVG(sip.lead_time_days), 1) AS "Variance (Days)"
 FROM MAXXBRANDS.suppliers s
 JOIN MAXXBRANDS.purchase_orders po ON s.supplier_id = po.supplier_id
 JOIN MAXXBRANDS.purchases p ON po.po_id = p.po_id
-JOIN MAXXBRANDS.supplier_item_prices sip ON s.supplier_id = sip.supplier_id AND sip.item_id IN (SELECT item_id FROM MAXXBRANDS.purchase_order_lines WHERE po_id = po.po_id)
+JOIN MAXXBRANDS.purchase_order_lines pol ON po.po_id = pol.po_id
+JOIN MAXXBRANDS.supplier_item_prices sip ON s.supplier_id = sip.supplier_id AND pol.item_id = sip.item_id
 GROUP BY s.name;
 
 -- ------------------------------------------
@@ -162,22 +169,5 @@ FROM MAXXBRANDS.sales s
 JOIN MAXXBRANDS.customers c ON s.customer_id = c.customer_id
 JOIN MAXXBRANDS.employees e ON s.processed_by = e.employee_id
 WHERE TRUNC(s.sale_date) = TRUNC(CURRENT_DATE);
-
--- View: Inventory Asset Valuation
--- Calculates the monetary value of current physical stock based on SRP
-CREATE OR REPLACE VIEW MAXXBRANDS.vw_inventory_valuation AS
-SELECT 
-    loc.name AS "Location",
-    cat.name AS "Category",
-    itm.item_name AS "Product",
-    inv.qty_on_hand AS "Stock",
-    itm.srp AS "Unit Price (SRP)",
-    (inv.qty_on_hand * itm.srp) AS "Total Asset Value"
-FROM MAXXBRANDS.inventory inv
-JOIN MAXXBRANDS.items itm ON inv.item_id = itm.item_id
-JOIN MAXXBRANDS.item_types typ ON itm.type_id = typ.type_id
-JOIN MAXXBRANDS.categories cat ON typ.category_id = cat.category_id
-JOIN MAXXBRANDS.locations loc ON inv.location_id = loc.location_id
-ORDER BY "Total Asset Value" DESC;
 
 COMMIT;
